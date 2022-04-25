@@ -15,6 +15,9 @@ import usePreloadedImage from './hooks/usePreloadedImage';
 import * as System from '../constants/system';
 import { int2rgba, vector2index } from '../utils/general';
 import { drawPixel, drawPixelBuffer, drawPixelRgbaBuffer, drawImageData, paintCanvasBlack, fillCanvasWithImage } from '../utils/draw';
+import ActionMenu from "./ActionMenu"
+
+
 // import Tooltip from './TrackingTooltip.js';
 
 
@@ -138,6 +141,7 @@ const Board = (props) => {
     const viewFlashback = props.viewFlashback;
 
     const [selectedTile, setSelectedTile] = React.useState(null); // {x: 0, y: 0}
+    const [showActionMenu, setShowActionMenu] = React.useState(false);
     const [flashBackImage, setFlashbackImage] = usePreloadedImage(System.FLASHBACK_BOARD_PATH);
 
     var draw = (ctx, frameCount) => {
@@ -290,31 +294,41 @@ const Board = (props) => {
     // change map value later
     // const { height, width } = useWindowDimensions();
     return (
-        <MapInteractionCSS
-            minScale={.125}
-            maxScale={32}
-            value={mapTransform}
-            onChange={onMapChange}
-            defaultValue={{
-                scale: INITIAL_SCALE,
-                translation: {
-                    x: (window.innerWidth - INITIAL_CANVAS_WIDTH) / 2,
-                    y: (window.innerHeight - INITIAL_CANVAS_HEIGHT) / 2
-                }
-            }}
-        >
-            {highligths}
-            <div
-            {...swipeHandlers}
-            onTouchStart={onMapTouchStart}
-            >
-            <canvas
-                ref={canvasRef}
-                {...rest}
-                {...clickHandlerProps}
+        <>
+            <ActionMenu
+                showActionMenu={showActionMenu}
+                setShowActionMenu={setShowActionMenu}
             />
-            </div>
-        </MapInteractionCSS>
+            <MapInteractionCSS
+                minScale={.125}
+                maxScale={32}
+                value={mapTransform}
+                onChange={onMapChange}
+                defaultValue={{
+                    scale: INITIAL_SCALE,
+                    translation: {
+                        x: (window.innerWidth - INITIAL_CANVAS_WIDTH) / 2,
+                        y: (window.innerHeight - INITIAL_CANVAS_HEIGHT) / 2
+                    }
+                }}
+            >
+                {highligths}
+                <div
+                {...swipeHandlers}
+                onTouchStart={onMapTouchStart}
+                onContextMenu={(e) => {
+                    e.preventDefault();
+                    setShowActionMenu(true);
+                  }}
+                >
+                <canvas
+                    ref={canvasRef}
+                    {...rest}
+                    {...clickHandlerProps}
+                />
+                </div>
+            </MapInteractionCSS>
+        </>
     );
 }
 

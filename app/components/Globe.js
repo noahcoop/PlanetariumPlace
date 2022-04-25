@@ -14,6 +14,8 @@ import { drawPixelBuffer, drawPixelRgbaBuffer, drawImageData, paintCanvasBlack, 
 import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
+import ActionMenu from "./ActionMenu"
+
 
 function randInt(min, max) {
     if (max === undefined) {
@@ -136,6 +138,8 @@ function CanvasGlobe(props) {
     const MAP_ROTATION_TOLERANCE = 0.001;
     // const [mapRotation, setMapRotation] = useState(new THREE.Vector3( 0, 0, 0 ));
     const [mapScale, setMapScale] = useState(2.5);
+    const [showActionMenu, setShowActionMenu] = React.useState(false);
+
     const [mapScaleOnTouchStart, setMapScaleOnTouchStart] = useState(2.5);
     const [mapRotationOnTouchStart, setMapRotationOnTouchStart] = useState(new THREE.Vector3( 0, 0, 0 ));
     const onMapTouchStart = (event) => {
@@ -313,22 +317,32 @@ function CanvasGlobe(props) {
     // onPointerDown={onMapTouchStart}
     // onTouchStart={onMapTouchStart}
     return (
-        <div
-            onPointerDown={onMapTouchStart}
-        >
-            <Globe
-                ref={globeEl}
-                backgroundColor={"#000011"}
-                showGraticules={true}
-                {...clickHandlerProps}
-                onZoom={onZoom}
-                {...countryProps}
+        <>
+            <ActionMenu
+                showActionMenu={showActionMenu}
+                setShowActionMenu={setShowActionMenu}
             />
-            <canvas
-                ref={canvasRef}
-                {...rest}
-            />
-        </div>
+            <div
+                onPointerDown={onMapTouchStart}
+                onContextMenu={(e) => {
+                    e.preventDefault();
+                    setShowActionMenu(true);
+                }}
+            >
+                <Globe
+                    ref={globeEl}
+                    backgroundColor={"#000011"}
+                    showGraticules={true}
+                    {...clickHandlerProps}
+                    onZoom={onZoom}
+                    {...countryProps}
+                />
+                <canvas
+                    ref={canvasRef}
+                    {...rest}
+                />
+            </div>
+        </>
     );
 }
 
